@@ -1,28 +1,11 @@
-import * as React from 'react'
-import { Suspense } from 'react'
-import * as THREE from 'three'
+import React, { Suspense } from 'react'
+
 import Goblin from 'src/components/molecules/Goblin'
 import GroundPlane from 'src/components/molecules/GroundPlane'
+import Light from 'src/components/atoms/Light'
 
 function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-const Light = () => {
-  //Create a PointLight and turn on shadows for the light
-  const light = new THREE.DirectionalLight(0xffffff, 4)
-  light.position.set(0, 0, 10)
-  light.castShadow = true // default false
-  //Set up shadow properties for the light
-  light.shadow.mapSize.width = 10 // default
-  light.shadow.mapSize.height = 10 // default
-  light.shadow.camera.near = 0.1 // default
-  light.shadow.camera.far = 10 // default
-  light.shadow.camera.top = -10 // default
-  light.shadow.camera.right = 10 // default
-  light.shadow.camera.left = -10 // default
-  light.shadow.camera.bottom = 10 // default
-  return <primitive object={light}/>
 }
 
 class GoblinScene extends React.Component {
@@ -30,24 +13,71 @@ class GoblinScene extends React.Component {
     super(props)
     this.state = {
       walking: false,
-      position: [0, 0, 0]
+      position: [0, 0, 0],
+      rotation: 0,
     }
     this.walk = this.walk.bind(this)
     this.onCanvasClick = this.onCanvasClick.bind(this)
   }
 
-  walk(stepX, stepY) {
+  _getRotation(stepX, stepY) {
+    const horizontal = {
+      left: '-0.1',
+      right: '0.1',
+      not: '0',
+    }
+    const vertical = {
+      down: '-0.1',
+      up: '0.1',
+      not: '0',
+    }
+    let rotation
+    switch (`${stepX.toString()}/${stepY.toString()}`) {
+      case `${horizontal.not}/${vertical.down}`:
+      case `${horizontal.not}/${vertical.not}`:
+        rotation = 0
+        break
+      case `${horizontal.right}/${vertical.down}`:
+        rotation = Math.PI / 4
+        break
+      case `${horizontal.right}/${vertical.not}`:
+        rotation = Math.PI * 2 / 4
+        break
+      case `${horizontal.right}/${vertical.up}`:
+        rotation = Math.PI * 3 / 4
+        break
+      case `${horizontal.not}/${vertical.up}`:
+        rotation = Math.PI
+        break
+      case `${horizontal.left}/${vertical.up}`:
+        rotation = Math.PI * 5 / 4
+        break
+      case `${horizontal.left}/${vertical.not}`:
+        rotation = Math.PI * 6 / 4
+        break
+      case `${horizontal.left}/${vertical.down}`:
+        rotation = Math.PI * 7 / 4
+        break
+      default:
+    }
+    return rotation
+  }
+
+  walk (stepX, stepY) {
+    const rotation = this._getRotation(stepX, stepY)
+
     this.setState(state => ({
       ...state,
       position: [
         Math.round((state.position[0] + stepX) * 10) / 10,
         Math.round((state.position[1] + stepY) * 10) / 10,
         0
-      ]
+      ],
+      rotation
     }))
   }
 
-  async onCanvasClick(e) {
+  async onCanvasClick (e) {
     let { walking, position } = this.state
 
     if (walking) {
@@ -70,15 +100,14 @@ class GoblinScene extends React.Component {
       position = this.state.position
       await sleep(17)
     }
-    console.log('I walked')
     this.setState(state => ({ ...state, walking: false }))
   }
 
   render () {
-    const { position } = this.state
+    const { position, rotation } = this.state
     return <>
       <Light/>
-      <Goblin position={position}/>
+      <Goblin position={position} rotation={rotation}/>
       <Suspense fallback={null}>
         <GroundPlane onClick={this.onCanvasClick}/>
       </Suspense>

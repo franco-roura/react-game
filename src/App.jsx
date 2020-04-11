@@ -7,11 +7,11 @@ function App (props) {
   return (<div>
     <Canvas
       data-paper-resize
-      style={{ height: '40vw', width: '100vw' }}
+      style={{ height: '100vh', width: '100vw' }}
       orthographic={true}
       camera={{ zoom: 60 }}
     >
-      <GoblinScene/>
+      <GoblinScene />
     </Canvas>
   </div>)
 }

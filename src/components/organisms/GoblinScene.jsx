@@ -20,19 +20,19 @@ class GoblinScene extends React.Component {
     this.onCanvasClick = this.onCanvasClick.bind(this)
   }
 
-  _getRotation(stepX, stepY) {
+  _getRotation(stepX, stepZ) {
     const horizontal = {
-      left: '-0.1',
-      right: '0.1',
+      left: '-1',
+      right: '1',
       not: '0',
     }
     const vertical = {
-      down: '-0.1',
-      up: '0.1',
+      down: '1',
+      up: '-1',
       not: '0',
     }
     let rotation
-    switch (`${stepX.toString()}/${stepY.toString()}`) {
+    switch (`${stepX.toString()}/${stepZ.toString()}`) {
       case `${horizontal.not}/${vertical.down}`:
       case `${horizontal.not}/${vertical.not}`:
         rotation = 0
@@ -69,9 +69,9 @@ class GoblinScene extends React.Component {
     this.setState(state => ({
       ...state,
       position: [
-        Math.round((state.position[0] + stepX) * 10) / 10,
-        Math.round((state.position[1] + stepY) * 10) / 10,
-        0
+        state.position[0] + stepX,
+        0,
+        state.position[2] + stepY,
       ],
       rotation
     }))
@@ -79,7 +79,6 @@ class GoblinScene extends React.Component {
 
   async onCanvasClick (e) {
     let { walking, position } = this.state
-
     if (walking) {
       return null
     } else {
@@ -90,15 +89,18 @@ class GoblinScene extends React.Component {
       y: e.pageY * 100 / (window.innerWidth * 0.4),
     }
     const coords3d = {
-      x: Math.round((0.15 * (clickPercentage.x - 100) + 7.5) * 10) / 10,
-      y: Math.round((-0.06 * (clickPercentage.y - 100) - 3) * 10) / 10
+      // x: Math.round((0.15 * (clickPercentage.x - 100) + 7.5) * 10) / 10,
+      // y: Math.round((-0.06 * (clickPercentage.y - 100) - 3) * 10) / 10
+      x: Math.round(e.unprojectedPoint.x),
+      z: Math.round((e.unprojectedPoint.z + 360) * 2.07 - 313)
     }
-    while (coords3d.x !== position[0] || coords3d.y !== position[1]) {
-      const horizontalStep = 0.1 * Math.sign(coords3d.x - position[0])
-      const verticalStep = 0.1 * Math.sign(coords3d.y - position[1])
+
+    while (coords3d.x !== position[0] || coords3d.z !== position[2]) {
+      const horizontalStep = Math.sign(coords3d.x - position[0])
+      const verticalStep = Math.sign(coords3d.z - position[2])
       this.walk(horizontalStep, verticalStep)
       position = this.state.position
-      await sleep(17)
+      await sleep(5)
     }
     this.setState(state => ({ ...state, walking: false }))
   }

@@ -13,7 +13,8 @@ function Model (props) {
         {...props}
         object={gltf.scene}
         ref={mesh}
-        rotation={[-5.4, props.rotationY, 0]}
+        rotation={[0, props.rotationY, 0]}
+        scale={[50,50,50]}
         dispose={null}
       />
   )

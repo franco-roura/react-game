@@ -9,10 +9,10 @@ function GroundPlane({onClick}) {
   texture.wrapT = RepeatWrapping;
   texture.offset.set(0, 0);
   texture.repeat.set(4, 4);
-  const planeWidth = window.innerWidth / 60
+  const planeWidth = 1000
   const planeHeight = planeWidth * 3/4
   return (
-      <mesh receiveShadow={true} rotation={[0, 0, 0]} position={[0, 0, 0]} onClick={onClick}>
+      <mesh receiveShadow={true} rotation={[-(Math.PI/2), 0, 0]} position={[0, 0, 0]} onClick={onClick}>
         <planeBufferGeometry attach="geometry" args={[planeWidth, planeHeight]} />
         <meshStandardMaterial
           attach="material"

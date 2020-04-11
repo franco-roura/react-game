@@ -5,7 +5,7 @@ import * as THREE from 'three'
 const Light = (props) => {
   //Create a PointLight and turn on shadows for the light
   const light = new THREE.DirectionalLight(0xffffff, 4)
-  light.position.set(0, 0, 10)
+  light.position.set(0, 100, 100)
   Object.assign(light, {
     castShadow: true,
     shadow: {

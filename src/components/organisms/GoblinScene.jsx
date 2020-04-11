@@ -20,51 +20,29 @@ class GoblinScene extends React.Component {
     this.onCanvasClick = this.onCanvasClick.bind(this)
   }
 
-  _getRotation(stepX, stepZ) {
-    const horizontal = {
-      left: '-1',
-      right: '1',
-      not: '0',
-    }
-    const vertical = {
-      down: '1',
-      up: '-1',
-      not: '0',
-    }
-    let rotation
-    switch (`${stepX.toString()}/${stepZ.toString()}`) {
-      case `${horizontal.not}/${vertical.down}`:
-      case `${horizontal.not}/${vertical.not}`:
-        rotation = 0
-        break
-      case `${horizontal.right}/${vertical.down}`:
-        rotation = Math.PI / 4
-        break
-      case `${horizontal.right}/${vertical.not}`:
-        rotation = Math.PI * 2 / 4
-        break
-      case `${horizontal.right}/${vertical.up}`:
-        rotation = Math.PI * 3 / 4
-        break
-      case `${horizontal.not}/${vertical.up}`:
-        rotation = Math.PI
-        break
-      case `${horizontal.left}/${vertical.up}`:
-        rotation = Math.PI * 5 / 4
-        break
-      case `${horizontal.left}/${vertical.not}`:
-        rotation = Math.PI * 6 / 4
-        break
-      case `${horizontal.left}/${vertical.down}`:
-        rotation = Math.PI * 7 / 4
-        break
-      default:
-    }
-    return rotation
+  _getPlayerRotation(stepX, stepZ) {
+    const horizontal = { left: '-1', right: '1', not: '0' }
+    const vertical = { down: '1', up: '-1', not: '0' }
+    // TODO: Find a better way to do this.
+    //  Arrays inside availableAxes wont work because indexOf does deep equal comparison
+    const allDifferentAxes = [
+      `${horizontal.not}, ${vertical.not}`,
+      `${horizontal.right}, ${vertical.down}`,
+      `${horizontal.right}, ${vertical.not}`,
+      `${horizontal.right}, ${vertical.up}`,
+      `${horizontal.not}, ${vertical.up}`,
+      `${horizontal.left}, ${vertical.up}`,
+      `${horizontal.left}, ${vertical.not}`,
+      `${horizontal.left}, ${vertical.down}`,
+      `${horizontal.not}, ${vertical.down}`,
+    ]
+    const stepDirection = `${stepX.toString()}, ${stepZ.toString()}`
+    const axisDirection = allDifferentAxes.indexOf(stepDirection)
+    return Math.PI * axisDirection / 4
   }
 
   walk (stepX, stepY) {
-    const rotation = this._getRotation(stepX, stepY)
+    const rotation = this._getPlayerRotation(stepX, stepY)
 
     this.setState(state => ({
       ...state,
@@ -84,13 +62,7 @@ class GoblinScene extends React.Component {
     } else {
       this.setState(state => ({ ...state, walking: true }))
     }
-    const clickPercentage = {
-      x: e.pageX * 100 / window.innerWidth,
-      y: e.pageY * 100 / (window.innerWidth * 0.4),
-    }
     const coords3d = {
-      // x: Math.round((0.15 * (clickPercentage.x - 100) + 7.5) * 10) / 10,
-      // y: Math.round((-0.06 * (clickPercentage.y - 100) - 3) * 10) / 10
       x: Math.round(e.unprojectedPoint.x),
       z: Math.round((e.unprojectedPoint.z + 360) * 2.07 - 313)
     }

@@ -1,9 +1,12 @@
 import * as React from 'react'
-import { Suspense, useState } from 'react'
-import { useFrame, useThree } from 'react-three-fiber'
+import { Suspense } from 'react'
 import * as THREE from 'three'
 import Goblin from 'src/components/molecules/Goblin'
 import GroundPlane from 'src/components/molecules/GroundPlane'
+
+function sleep (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 const Light = () => {
   //Create a PointLight and turn on shadows for the light
@@ -22,34 +25,65 @@ const Light = () => {
   return <primitive object={light}/>
 }
 
-function GoblinScene ({ onClick }) {
-  const onCanvasClick = (e) => {
+class GoblinScene extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      walking: false,
+      position: [0, 0, 0]
+    }
+    this.walk = this.walk.bind(this)
+    this.onCanvasClick = this.onCanvasClick.bind(this)
+  }
+
+  walk(stepX, stepY) {
+    this.setState(state => ({
+      ...state,
+      position: [
+        Math.round((state.position[0] + stepX) * 10) / 10,
+        Math.round((state.position[1] + stepY) * 10) / 10,
+        0
+      ]
+    }))
+  }
+
+  async onCanvasClick(e) {
+    let { walking, position } = this.state
+
+    if (walking) {
+      return null
+    } else {
+      this.setState(state => ({ ...state, walking: true }))
+    }
     const clickPercentage = {
       x: e.pageX * 100 / window.innerWidth,
       y: e.pageY * 100 / (window.innerWidth * 0.4),
     }
     const coords3d = {
-      x: 0.15 * (clickPercentage.x - 100) + 7.5,
-      y: -0.06 * (clickPercentage.y - 100) - 3
+      x: Math.round((0.15 * (clickPercentage.x - 100) + 7.5) * 10) / 10,
+      y: Math.round((-0.06 * (clickPercentage.y - 100) - 3) * 10) / 10
     }
-    walk([coords3d.x, coords3d.y, 0])
-    console.log(coords3d)
+    while (coords3d.x !== position[0] || coords3d.y !== position[1]) {
+      const horizontalStep = 0.1 * Math.sign(coords3d.x - position[0])
+      const verticalStep = 0.1 * Math.sign(coords3d.y - position[1])
+      this.walk(horizontalStep, verticalStep)
+      position = this.state.position
+      await sleep(17)
+    }
+    console.log('I walked')
+    this.setState(state => ({ ...state, walking: false }))
   }
-  const [position, walk] = useState([0, 0, 0])
 
-  const { gl } = useThree()
-  useFrame(() => {
-    gl.shadowMap.type = THREE.PCFSoftShadowMap
-    gl.shadowMap.enabled = true
-  })
-  return <>
-
-    <Light/>
-    <Goblin position={position} onSceneClick={onClick}/>
-    <Suspense fallback={null}>
-      <GroundPlane onClick={onCanvasClick}/>
-    </Suspense>
-  </>
+  render () {
+    const { position } = this.state
+    return <>
+      <Light/>
+      <Goblin position={position}/>
+      <Suspense fallback={null}>
+        <GroundPlane onClick={this.onCanvasClick}/>
+      </Suspense>
+    </>
+  }
 }
 
 export default GoblinScene

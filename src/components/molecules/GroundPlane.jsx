@@ -3,7 +3,7 @@ import {useLoader} from 'react-three-fiber'
 import {TextureLoader, RepeatWrapping} from 'three'
 import GrassTexture from 'src/assets/textures/grass.jpg'
 
-function GroundPlane() {
+function GroundPlane({onClick}) {
   const texture = useLoader(TextureLoader, GrassTexture)
   texture.wrapS = RepeatWrapping;
   texture.wrapT = RepeatWrapping;
@@ -12,7 +12,7 @@ function GroundPlane() {
   const planeWidth = window.innerWidth / 60
   const planeHeight = planeWidth * 3/4
   return (
-      <mesh receiveShadow={true} rotation={[0, 0, 0]} position={[0, 0, 0]}>
+      <mesh receiveShadow={true} rotation={[0, 0, 0]} position={[0, 0, 0]} onClick={onClick}>
         <planeBufferGeometry attach="geometry" args={[planeWidth, planeHeight]} />
         <meshStandardMaterial
           attach="material"

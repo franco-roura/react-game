@@ -6,7 +6,7 @@ import Light from 'src/components/atoms/Light'
 import { getAxisRotation, getVectorizedStep, sleep } from 'src/utils/physics'
 
 class RegularScene extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       playerIsWalking: false,
@@ -17,21 +17,19 @@ class RegularScene extends React.Component {
     this.onCanvasClick = this.onCanvasClick.bind(this)
   }
 
-  walk (stepX, stepY) {
-    const playerRotation = getAxisRotation(stepX, stepY)
-
+  walk(stepVector, playerRotation) {
     this.setState(state => ({
       ...state,
       playerPosition: [
-        state.playerPosition[0] + stepX,
+        state.playerPosition[0] + stepVector.x,
         0,
-        state.playerPosition[2] + stepY,
+        state.playerPosition[2] + stepVector.z,
       ],
       playerRotation
     }))
   }
 
-  async onCanvasClick (e) {
+  async onCanvasClick(e) {
     let { playerIsWalking, playerPosition } = this.state
     if (playerIsWalking) {
       return null
@@ -44,13 +42,13 @@ class RegularScene extends React.Component {
       x: Math.round(e.unprojectedPoint.x),
       z: Math.round((e.unprojectedPoint.z + 360) * 2.07 - 313)
     }
-
     while (
       finalPlayerPosition.x !== currentPlayerPosition.x ||
       finalPlayerPosition.z !== currentPlayerPosition.z
       ) {
       const vectorizedStep = getVectorizedStep(currentPlayerPosition, finalPlayerPosition)
-      this.walk(vectorizedStep.x, vectorizedStep.z)
+      const playerRotation = getAxisRotation(vectorizedStep)
+      this.walk(vectorizedStep, playerRotation)
       currentPlayerPosition = {x: this.state.playerPosition[0], z: this.state.playerPosition[2]}
       await sleep(5)
     }
@@ -58,7 +56,7 @@ class RegularScene extends React.Component {
     this.setState(state => ({ ...state, playerIsWalking: false }))
   }
 
-  render () {
+  render() {
     const { playerPosition, playerRotation, playerIsWalking } = this.state
     return <>
       <Light/>

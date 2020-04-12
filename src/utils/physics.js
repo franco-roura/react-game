@@ -1,22 +1,6 @@
-export function getAxisRotation (axis1Delta, axis2Delta) {
-  const horizontal = { left: '-1', right: '1', not: '0' }
-  const vertical = { down: '1', up: '-1', not: '0' }
-  // TODO: Find a better way to do this.
-  //  Arrays inside availableAxes wont work because indexOf does deep equal comparison
-  const allDifferentAxes = [
-    `${horizontal.not}, ${vertical.not}`,
-    `${horizontal.right}, ${vertical.down}`,
-    `${horizontal.right}, ${vertical.not}`,
-    `${horizontal.right}, ${vertical.up}`,
-    `${horizontal.not}, ${vertical.up}`,
-    `${horizontal.left}, ${vertical.up}`,
-    `${horizontal.left}, ${vertical.not}`,
-    `${horizontal.left}, ${vertical.down}`,
-    `${horizontal.not}, ${vertical.down}`,
-  ]
-  const stepDirection = `${axis1Delta.toString()}, ${axis2Delta.toString()}`
-  const axisDirection = allDifferentAxes.indexOf(stepDirection)
-  return Math.PI * axisDirection / 4
+export function getAxisRotation ({x: axis1Delta, z: axis2Delta}) {
+  let lineSlope = axis1Delta/axis2Delta
+  return axis2Delta > 0 ? Math.atan(lineSlope) : Math.atan(lineSlope) + Math.PI
 }
 
 export async function sleep (ms) {

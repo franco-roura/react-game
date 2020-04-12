@@ -52,6 +52,9 @@ workflows:
     pipeline:
       jobs:
         - setup
-        - build-and-deploy:
+        - build:
             requires:
               - setup
+        - deploy:
+            requires:
+              - build

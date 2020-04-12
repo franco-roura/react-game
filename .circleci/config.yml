@@ -1,23 +1,18 @@
 version: 2.1
 orbs:
   node: circleci/node@2.0.1
+  s3: circleci/aws-s3@1.0.15
 jobs:
   setup:
-    executor:
-      name: node/default
+    docker:
+      - image: 'cimg/base:stable'
     steps:
       - node/install:
           install-yarn: true
           node-version: latest
-      - run:
-          name: Downloading AWS cli
-          command: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; unzip awscliv2.zip
-      - run:
-          name: Installing AWS cli
-          command: sudo ./aws/install; /usr/local/bin/aws --version
   build:
-    executor:
-      name: node/default
+    docker:
+      - image: 'cimg/base:stable'
     steps:
       - checkout
       - attach_workspace:
@@ -33,21 +28,17 @@ jobs:
           paths:
             - dist/*
   deploy:
-    executor:
-      name: node/default
+    docker:
+      - image: 'cimg/base:stable'
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - run: ls -l /tmp/workspace/dist
       - run: ls -l
-      - run:
-          name: Deploying to AWS
-          command: |
-            if [ "${CIRCLE_BRANCH}" = "master" ]; then
-              /usr/local/bin/aws s3 sync ./dist s3://react-webgl-game --delete
-            else
-              echo "Not master branch, dry run only"
-            fi
+      - s3/sync:
+          from: dist
+          overwrite: true
+          to: 's3://react-webgl-game'
 workflows:
     pipeline:
       jobs:

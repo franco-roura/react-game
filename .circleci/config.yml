@@ -14,7 +14,8 @@ jobs:
           command: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; unzip awscliv2.zip
       - run:
           name: Installing AWS cli
-          command: sudo ./aws/install
+          command: sudo ./aws/install; /usr/local/bin/aws --version
+
   build-and-deploy:
     executor:
       name: node/default
@@ -30,7 +31,7 @@ jobs:
           name: Deploying to AWS
           command: |
             if [ "${CIRCLE_BRANCH}" = "master" ]; then
-              aws s3 sync ./dist s3://react-webgl-game --delete
+              /usr/local/bin/aws s3 sync ./dist s3://react-webgl-game --delete
             else
               echo "Not master branch, dry run only"
             fi

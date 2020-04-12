@@ -22,7 +22,6 @@ function App (props) {
     >
       {/*<Camera position={[0, 500, 0]} rotation={[-Math.PI/2, 0, 0]}/>*/}
       <Camera position={[0, 500, 500]} rotation={[-Math.PI/4, 0, 0]}/>
-      <axesHelper position={[0,0,5]} size={500} scale={[100,100,100]}/>
       <GoblinScene />
     </Canvas>
   </div>)

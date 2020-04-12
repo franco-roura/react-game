@@ -90,7 +90,7 @@ module.exports = {
       },
       {
         // Now we apply rule for 3D objects
-        test: /\.(gltf)$/,
+        test: /\.(gltf|fbx|glb)$/,
         use: [
           {
             // Using file-loader for these files

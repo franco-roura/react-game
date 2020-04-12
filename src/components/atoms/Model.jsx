@@ -1,22 +1,38 @@
-import React, { useRef, useState } from 'react'
-import { useLoader } from 'react-three-fiber'
+import React, { useEffect, useMemo, useRef } from 'react'
+import { useFrame, useLoader } from 'react-three-fiber'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import * as THREE from 'three'
 
 function Model (props) {
-  // This reference will give us direct access to the mesh
   const mesh = useRef()
-
   const gltf = useLoader(GLTFLoader, props.url)
+  const model = gltf.scene
+
+  if (props.animated) {
+    const mixer = useMemo(() => new THREE.AnimationMixer(model), [model])
+    const walkAnimation = gltf.animations[10]
+    const mixerClip = mixer.clipAction(walkAnimation)
+    useEffect(() => {
+        if (props.animationActive) {
+          mixerClip.play()
+        } else {
+          mixerClip.stop()
+        }
+      },
+      [props.animationActive]
+    )
+    useFrame((state, delta) => mixer.update(delta))
+  }
 
   return (
-      <primitive
-        {...props}
-        object={gltf.scene}
-        ref={mesh}
-        rotation={[0, props.rotationY, 0]}
-        scale={[50,50,50]}
-        dispose={null}
-      />
+    <primitive
+      {...props}
+      object={model}
+      ref={mesh}
+      rotation={[0, props.rotationY, 0]}
+      scale={[50, 50, 50]}
+      dispose={null}
+    />
   )
 }
 

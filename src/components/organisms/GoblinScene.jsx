@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 
-import Goblin from 'src/components/molecules/Goblin'
+import Player from 'src/components/molecules/Player'
 import GroundPlane from 'src/components/molecules/GroundPlane'
 import Light from 'src/components/atoms/Light'
 
@@ -78,10 +78,10 @@ class GoblinScene extends React.Component {
   }
 
   render () {
-    const { position, rotation } = this.state
+    const { position, rotation, walking } = this.state
     return <>
       <Light/>
-      <Goblin position={position} rotation={rotation}/>
+      <Player isWalking={walking} position={position} rotation={rotation}/>
       <Suspense fallback={null}>
         <GroundPlane onClick={this.onCanvasClick}/>
       </Suspense>

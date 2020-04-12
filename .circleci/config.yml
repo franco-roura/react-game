@@ -9,18 +9,35 @@ jobs:
       - node/install:
           install-yarn: true
           node-version: latest
-  build:
+      - run:
+        - name: Downloading AWS cli
+        - command: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; unzip awscliv2.zip
+      - run:
+        - name: Installing AWS cli
+        - command: sudo ./aws/install
+  build-and-deploy:
     executor:
       name: node/default
     steps:
       - checkout
-      - run: yarn install
-      - run: yarn build
-
+      - run:
+        - name: Installing package.json dependencies
+        - command: yarn install
+      - run:
+        - name: Building dist
+        - command: yarn build
+      - deploy:
+          name: Deploying to AWS
+          command: |
+            if [ "${CIRCLE_BRANCH}" = "master" ]; then
+              aws s3 sync ./dist s3://react-webgl-game --delete
+            else
+              echo "Not master branch, dry run only"
+            fi
 workflows:
     pipeline:
       jobs:
         - setup
-        - build:
+        - build-and-deploy:
             requires:
               - setup

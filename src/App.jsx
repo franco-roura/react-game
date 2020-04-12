@@ -1,29 +1,26 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import 'src/main-theme.scss'
-import { Canvas, useFrame, useThree } from 'react-three-fiber'
+import { Canvas } from 'react-three-fiber'
 import RegularScene from 'src/components/organisms/RegularScene'
-
-function Camera(props) {
-  const ref = useRef()
-  const { setDefaultCamera } = useThree()
-  // Make the camera known to the system
-  useEffect(() => void setDefaultCamera(ref.current), [])
-  // Update it every frame
-  useFrame(() => ref.current.updateMatrixWorld())
-  return <orthographicCamera ref={ref} {...props}/>
-}
 
 function App (props) {
   return (<div>
+    <h1>The person simulator</h1>
+    <p>
+      In this incredible game you are an actual person, for real! And you can click to walk...
+      Awesome, right?
+    </p>
     <Canvas
       data-paper-resize
-      style={{ height: '100vh', width: '100vw' }}
+      style={{ height: '560px', width: '100vw' }}
       orthographic={true}
     >
-      {/*<Camera position={[0, 500, 0]} rotation={[-Math.PI/2, 0, 0]}/>*/}
-      <Camera position={[0, 500, 500]} rotation={[-Math.PI/4, 0, 0]}/>
       <RegularScene />
     </Canvas>
+    <p>
+      Disclaimer: You are not an actual person, you're a WebGL graphic made by <a href='http://quaternius.com'>a 3D designer called Quaternius</a> brought to life with ThreeJS and React Three Fiber.
+    </p>
+    <p>Yes, I made this "game" with React. Please support Quaternius so I can keep using his work for fun experiments.</p>
   </div>)
 }
 

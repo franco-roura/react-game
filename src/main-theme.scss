@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Friz Quadrata TT';
+  src: url(assets/fonts/FrizQuadrataTT.ttf) format('truetype');
+}
+
 body {
   margin: 0;
   display: flex;
@@ -5,8 +10,15 @@ body {
   background-color: #28292c;
   text-align: center;
 }
+h1 {
+  font-family: "Friz Quadrata TT", "Open Sans", sans-serif;
+  color: darkgoldenrod;
+}
 p {
   font-family: "Open Sans", sans-serif;
+  color: white;
+}
+a {
   color: #1cd2ff;
 }
 canvas {

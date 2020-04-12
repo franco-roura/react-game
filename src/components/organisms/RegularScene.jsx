@@ -4,6 +4,7 @@ import Player from 'src/components/molecules/Player'
 import GroundPlane from 'src/components/molecules/GroundPlane'
 import Light from 'src/components/atoms/Light'
 import { getAxisRotation, getVectorizedStep, sleep } from 'src/utils/physics'
+import Camera from 'src/components/atoms/Camera'
 
 class RegularScene extends React.Component {
   constructor(props) {
@@ -59,6 +60,7 @@ class RegularScene extends React.Component {
   render() {
     const { playerPosition, playerRotation, playerIsWalking } = this.state
     return <>
+      <Camera position={[0, 500, 500]} rotation={[-Math.PI/4, 0, 0]}/>
       <Light/>
       <Player isWalking={playerIsWalking} position={playerPosition} rotation={playerRotation}/>
       <Suspense fallback={null}>

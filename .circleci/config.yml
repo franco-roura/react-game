@@ -10,22 +10,22 @@ jobs:
           install-yarn: true
           node-version: latest
       - run:
-        - name: Downloading AWS cli
-        - command: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; unzip awscliv2.zip
+          name: Downloading AWS cli
+          command: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; unzip awscliv2.zip
       - run:
-        - name: Installing AWS cli
-        - command: sudo ./aws/install
+          name: Installing AWS cli
+          command: sudo ./aws/install
   build-and-deploy:
     executor:
       name: node/default
     steps:
       - checkout
       - run:
-        - name: Installing package.json dependencies
-        - command: yarn install
+          name: Installing app dependencies
+          command: yarn install
       - run:
-        - name: Building dist
-        - command: yarn build
+          name: Building dist
+          command: yarn build
       - deploy:
           name: Deploying to AWS
           command: |

@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@2.0.1
 jobs:
-  build:
+  setup:
     executor:
       name: node/default
     steps:
@@ -10,10 +10,15 @@ jobs:
       - node/install:
           install-yarn: true
           node-version: latest
+  build:
+    executor:
+      name: node/default
+    steps:
       - run: yarn install
       - run: yarn build
 
 workflows:
     pipeline:
       jobs:
+        - setup
         - build

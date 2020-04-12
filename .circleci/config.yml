@@ -3,17 +3,13 @@ orbs:
   node: circleci/node@2.0.1
   s3: circleci/aws-s3@1.0.15
 jobs:
-  setup:
+  build:
     docker:
       - image: 'cimg/base:stable'
     steps:
       - node/install:
           install-yarn: true
           node-version: latest
-  build:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
@@ -42,10 +38,7 @@ jobs:
 workflows:
     pipeline:
       jobs:
-        - setup
-        - build:
-            requires:
-              - setup
+        - build
         - deploy:
             requires:
               - build

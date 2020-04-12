@@ -15,19 +15,32 @@ jobs:
       - run:
           name: Installing AWS cli
           command: sudo ./aws/install; /usr/local/bin/aws --version
-
-  build-and-deploy:
+  build:
     executor:
       name: node/default
     steps:
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Installing app dependencies
           command: yarn install
       - run:
           name: Building dist
           command: yarn build
-      - deploy:
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - dist/*
+  deploy:
+    executor:
+      name: node/default
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: ls -l /tmp/workspace/dist
+      - run: ls -l
+      - run:
           name: Deploying to AWS
           command: |
             if [ "${CIRCLE_BRANCH}" = "master" ]; then

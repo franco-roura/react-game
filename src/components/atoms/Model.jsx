@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { useFrame, useLoader } from 'react-three-fiber'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as THREE from 'three'
@@ -12,7 +12,7 @@ function Model (props) {
     const mixer = useMemo(() => new THREE.AnimationMixer(model), [model])
     const walkAnimation = gltf.animations[10]
     const mixerClip = mixer.clipAction(walkAnimation)
-    useEffect(() => {
+    useMemo(() => {
         if (props.animationActive) {
           mixerClip.play()
         } else {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import 'src/main-theme.scss'
 import { Canvas, useFrame, useThree } from 'react-three-fiber'
-import GoblinScene from 'src/components/organisms/GoblinScene'
+import RegularScene from 'src/components/organisms/RegularScene'
 
 function Camera(props) {
   const ref = useRef()
@@ -22,7 +22,7 @@ function App (props) {
     >
       {/*<Camera position={[0, 500, 0]} rotation={[-Math.PI/2, 0, 0]}/>*/}
       <Camera position={[0, 500, 500]} rotation={[-Math.PI/4, 0, 0]}/>
-      <GoblinScene />
+      <RegularScene />
     </Canvas>
   </div>)
 }
